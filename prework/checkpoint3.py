@@ -1,4 +1,4 @@
-def numRangeWithPrint(A, B, C):
+def numRange(A, B, C):
     # Arguments:
     #   A is an array of non-negative integers
     #   B is an integer equal to the minimum of a range
@@ -9,22 +9,86 @@ def numRangeWithPrint(A, B, C):
     #   Continuous sub-sequence means A[i]...A[j] where 0 <= i <= j < size(A)
 
     sumCount = 0
-    currSum = A[0]
-    start = 0
+    P = []
 
-    for (i = 1, i < A.size(), i += 1):
-        while (currSum > C && start < i):
-            currSum -= A[start]
-            start += 1
-        if currSum >= B:
-            sumCount += 1
-            continue
+    for index, item in enumerate(A):
+        if index == 0:
+            P.append(item)
+        else:
+            P.append(P[index - 1] + item)
 
+    pSum = 0
+    end = 0
+    for index, item in enumerate(P):
+        newPSum = item
+        end = index
+        while (end < len(P) and (P[end] - pSum) <= C):
+            if (P[end] - pSum) > C:
+                pSum = newPSum
+                continue
+            elif (P[end] - pSum) >= B:
+                sumCount += 1
+            end += 1
+        pSum = item
 
     return sumCount
 
+
+def numRangeRefactor2(A, B, C):
+
+    sumCount = 0
+    P = []
+
+    for index, item in enumerate(A):
+        if index == 0:
+            P.append(item)
+        else:
+            P.append(P[index - 1] + item)
+
+    pSum = 0
+    end = 0
+    print("P length =", len(P))
+    for index, item in enumerate(P):
+        newPSum = item
+        end = index
+        while (end < len(P) and (P[end] - pSum) <= C):
+            if (P[end] - pSum) > C:
+                print("shouldn't happen. end = ", end, ". P[end] = ", P[end])
+                pSum = newPSum
+                continue
+            elif (P[end] - pSum) >= B:
+                print("counted one. end =", end, ". P[end] =", P[end])
+                sumCount += 1
+            end += 1
+        pSum = item
+        print("pSum now =", pSum)
+
+    return sumCount
+
+
+def numRangeRefactor(A, B, C):
+    # Not the most space efficient.
+
+    sumCount = 0
+    currSum = 0
+
+    for ival in A:
+        currSum += ival
+        print("currSum = ", currSum)
+        if (currSum > C):
+            break
+        elif (currSum >= B):
+            sumCount += 1
+            print("sumCount = ", sumCount)
+
+    if len(A) > 1:
+        sumCount += numRangeRefactor(A[1:], B, C)
+
+    return sumCount
+
+
 def numRangeBasic(A, B, C):
-    # Not the most efficient. O(n^2)
+    # Not the most time efficient. O(n^2)
 
     sumCount = 0
 
