@@ -135,3 +135,33 @@ def subtractWithPrint(A):
        print(node.val)
        node = node.next
     return prev
+
+def nextGreater(A):
+    # Argument:
+    #   A is a list of integers
+    # Output:
+    #   Return a list of integers. For each element in the list, G[i] has been applied
+    #   G[i] for an element A[i] = an element A[j] such that
+    #       j is minimum possible and
+    #       j > i and
+    #       A[j] > A[i]
+    #   If no greater element exists, G[i] = -1
+
+    stack = []
+    t = 0, A[0]
+    stack.append(t)
+    for index, item in enumerate(A[1:]):
+        while stack:
+            top = stack.pop()
+            if item > top[1]:
+                A[top[0]] = item
+                continue
+            else:
+                stack.append(top)
+                break
+        t = index + 1, item
+        stack.append(t)
+    for leftover in stack:
+        A[leftover[0]] = -1
+
+    return A
