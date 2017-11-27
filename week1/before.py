@@ -63,6 +63,7 @@ def reverseWords(A):
     #   A word is a sequence of non-space characters
     #   No leading or trailing spaces even if present in the input string
     #   Multiple spaces should be reduced to a single space
+    # Questions:
     #   Capitalization important?
 
     words = ""
@@ -87,4 +88,43 @@ def reverseWords(A):
 
     return words
 
-##
+## String Search
+
+def strStr(A, B):
+    # Parameters:
+    #   haystack is a string
+    #   needle is a string
+    # Output:
+    #   return an integer; locate substring needle in haystack and return the
+    #   index of the first occurrence of needle, or -1 if needle is not in haystack
+    # Questions:
+    #   Can needle be empty? What to return if so? -1
+    #   What if both haystack and needle are empty? -1
+    #   Does case matter? I'll implement as if it does matter.
+    #   Index is the index of the first character of needle? Assume yes.
+    # Test cases:
+    #   Needle matches haystack exactly
+    #   Needle is at end of haystack
+    #   Needle is at beginning of haystack
+    #   Needle is not in haystack
+    #   Needle almost completes and then starts again...
+    #   Needle is one character
+
+    if len(A) == 0 or len(B) == 0:
+        return -1
+
+    tracker = -1
+    needlepoint = 0
+
+    for index, letter in enumerate(A):
+        if (letter == B[needlepoint] and needlepoint < len(B)):
+            tracker = index
+            while (tracker < len(A) and needlepoint < len(B) and A[tracker] == B[needlepoint]):
+                tracker += 1
+                needlepoint += 1
+                if needlepoint == len(B):
+                    return index
+            tracker = -1
+            needlepoint = 0
+
+    return -1
