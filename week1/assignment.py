@@ -325,6 +325,96 @@ def largestNumber(A):
 
 ## Space Recycle
 ### First Missing Integer
+def firstMissingPositive(A):
+    # Parameters:
+    #   A is an unsorted list of integers
+    # Output:
+    #   Return an integer, the first missing positive integer starting from 1
+    # Goal:
+    #   O(n) time and O(1) space
+    # Example:
+    #   [1,2,0] return 3
+    #   [3, 4, -1, 1] return 2
+    #   [-8, -7, -6] return 1
+    hashA = set(A)
+
+    for i in range(1, (len(A) + 1)):
+        if i not in hashA:
+            return i
+
+    return (len(A) + 1)
+
+
+## Missing/Repeated Number
+### Repeated and Missing Number Array
+def repeatedNumber(A):
+    # Parameters:
+    #   A is an immutable UNSORTED list of n integers from 1 to n
+    #   Each integer appears exactly once except A which appears twice and
+    #   B which is missing
+    # Output:
+    #   Return an array of two elements: A and B [A, B] (order matters)
+    # Goal:
+    #   O(n) time, try for no extra space!
+    # Example:
+    #   [3 1 2 5 3] --> [3, 4]
+
+    # Questions:
+    #   Any limit to size of input array? Make sure it works for > 10^5 numbers
+    #   Assume length > 2 and it definitely satisfies the input conditions described
+    #   Can throw error 'Invalid Input : Values should be in the range [1, N]'
+
+    # Test Cases:
+    #   Repeated is before Missing [1,2,3,3,5]
+    #   Missing is before Repeated [1,3,4,4,5]
+    #   Very large input array
+
+    # Approach:
+    #   Naive approach: Make a parallel set
+    #   1. pass through the array one at a time
+    #   2. Check if that element is already in the set
+    #   3. If not, add to set
+    #   4. If already in set, have found A (repeated integer)
+    #   5. Then pass through range (1, len(A) + 1)
+    #   6. Check if i is in set
+    #   7. If not, have found B
+    #   8. Would require 2 passes of n elements (worst case) and each check of set membership
+    #   is O(n) worst case so time complexity is O(n^2)
+    #   No extra space approach: Sort the array (O(n log n) time) and then pass through it
+    #   Linear time and no extra space approach: ??
+
+    # NAIVE O(n^2)
+    hashA = set()
+    returnA = -1
+    returnB = -1
+    result = []
+
+    for item in A:
+        if item in hashA:
+            returnA = item
+        else:
+            hashA.add(item)
+
+    for i in range(1, len(A) + 1):
+        if i not in hashA:
+            returnB = i
+
+    result = [returnA, returnB]
+    return result
+
+    # NO SPACE - WIP
+    # A.sort()
+    # repeated = -1
+    # result = []
+    #
+    # for index, each in enumerate(A):
+    #     if each == A[index - 1]: # Repeated found
+    #         repeated = each
+    #     if each != index + 1: # First missing
+    #         result.append(index + 1)
+    #
+    # result.insert(0, repeated)
+    # return result
 
 
 
@@ -422,3 +512,177 @@ def romanToInt(A):
             last = current
 
     return result
+
+
+## String Simulation
+### Count and Say
+def sayString(S):
+    outString = ''
+    current = S[0]
+    count = 1
+
+    for character in S[1:]:
+        if character == current:
+            count += 1
+            continue
+        else:
+            outString += (str(count))
+            outString += (current)
+            current = character
+            count = 1
+
+    outString += (str(count))
+    outString += (current)
+
+    return outString
+
+def countAndSay(A):
+    # Parameters:
+    #   A is an integer
+    # Output:
+    #   String equal to the Ath sequence in the pattern 1, 11, 21, 1211, 111221...
+    #   The current sequence translates how you would say the previous sequence
+    #   "number of" repeated integer + the integer
+    sayArray = []
+
+    for i in range(A):
+        if i == 0:
+            sayArray.append('1')
+        else:
+            newString = sayString(sayArray[i - 1])
+            sayArray.append(newString)
+
+    return sayArray[-1]
+
+
+## String Tricks
+### Longest Palindromic Substring
+def expandAroundCenter(S, left, right):
+    length = len(S)
+    while (left >= 0 and right <= length - 1 and S[left] == S[right]):
+        left -= 1
+        right += 1
+
+    sub = S[left + 1:right]
+    return sub
+
+def longestPalindrome(A):
+    # Parameters:
+    #   A is a string
+    # Output:
+    #   Return a string that is the longest substring of A that is a palindrome
+    #   S[i...j] where 0 <= i <= j < len(S) and reverse(S) = S
+    #   In case of conflict, return the substring that occurs first (lowest index)
+
+    # Examples:
+    # "aaaabaaa"  -> "aaabaaa"
+    # "abcde" -> "a"
+    # "" -> ""
+
+    # Approach:
+    # Start with first character, by default will return that
+    # Test each character as the center of a palindrome
+    #   Compare characters x digits away from the central character on both sides
+    #   For even palindrome, assume center is in between x and x + 1
+    # If a curr_palindrome is returned, compare its length to the max_palindrome
+    # If curr is longer, replace max with curr
+    # Complexity: O(n^2) time, O(n) space
+    max_palindrome= A[0]
+    n = len(A)
+    if n == 0:
+        return ''
+    elif n == 1:
+        return A
+
+    for i in range(n):
+        # Test for odd palindrome
+        curr_palindrome = expandAroundCenter(A, i, i)
+        if (len(curr_palindrome) > len(max_palindrome)):
+            max_overlap = curr_palindrome
+
+        # Test for even palindrome
+        even_palindrome = expandAroundCenter(A, i, i + 1)
+        if (len(even_palindrome) > len(max_palindrome)):
+            max_palindrome = even_palindrome
+
+    return max_palindrome
+
+
+## Pretty print
+### Pretty Json
+def multi_split(S, separators):
+    stack = []
+    current = ''
+    start = 0
+    delimiters = set(separators)
+
+    for index, character in enumerate(S):
+        if character in delimiters:
+            if start != 0:
+                piece = S[start:index]
+                stack.append(piece)
+            if index < len(S) - 1 and S[index + 1] == ',':
+                stack.append(character + ',')
+                start = index + 2
+            else:
+                stack.append(character)
+                start = index + 1
+        elif character == ',':
+            piece = S[start:index + 1]
+            stack.append(piece)
+            start = index + 1
+    if start < len(S):
+        piece = S[start:len(S)]
+        stack.append(piece)
+    return stack
+
+def prettyJSON(A):
+    # Split the string into an array without regex
+    chopped_json = [x.strip() for x in multi_split(A, '{}[]')]
+    prefix = ''
+    result = []
+
+    for each in chopped_json:
+        line = ''
+        if len(each) == 0:
+            continue
+        if each[0] in set('{['):
+            line = prefix + each
+            prefix += '\t'
+        elif each[0] in set(']}'):
+            prefix = prefix[:-1]
+            line = prefix + each
+        else:
+            line = prefix + each
+        result.append(line)
+
+    return result
+
+    #
+    # Parameters:
+    #   A is a string in the format of a json object (nested dictionaries)
+    #   Only [] and {} are braces
+    # Output:
+    #   Return a list of strings, where each entry corresponds to a single line
+    #   Pretty print the JSON object with proper indentation ('\t' for tab)
+    #   Every inner brace should increase one indentation to the following lines
+    #   Every outer brace should decrease indentation to the same line and the following lines
+    #   Ignore spaces
+    #   Strings should not have \n in them
+
+    # Examples:
+    # Input:
+    #   ["foo", {"bar":["baz",null,1.0,2]}]
+    # Output:
+    #   [
+    #     "foo",
+    #     {
+    #         "bar":
+    #         [
+    #             "baz",
+    #             null,
+    #             1.0,
+    #             2
+    #         ]
+    #     }
+    # ]
