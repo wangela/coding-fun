@@ -47,6 +47,7 @@ def longest_substring(A):
     # Output: Integer, length of the longest non-repeating substring
     # Example: "abcabcbb" --> substring is "abc" --> return 3
     #   "aaaaaaaa" --> substring is "a" --> return 1
+    # Approach: O(n^2), not the most efficient. A more efficient approach would be window.
     seen = set()
     maxLength = 0
     count = 0

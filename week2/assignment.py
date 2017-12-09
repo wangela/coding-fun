@@ -1,9 +1,46 @@
 # HASHING
-##
-###
-def fname(arg):
-    pass
+## Maths and Hashing
+### Points on the Straight Line
+def maxPoints(A, B):
+    # Parameters:
+    #   A is a list of integers
+    #   B is a list of integers
+    # Perform: (A[i], B[i]) are n points in a 2D plane.
+    # Output: Return an integer of the maximum number of points that lie on the same straight line.
+    # Questions: Negative? Zero? Minimum length of lists? Fair to say len(A) = len(B)? Can the points be the same?
+    # Example:
+    #   (1,1) and (2,2) -> 2
+    maxDots = 0
+    points = []
 
+    if len(A) < 3:
+        return len(A)
+
+    for i in range(len(A)):
+        points.append((A[i], B[i]))
+
+    for i in range(len(points)):
+        slopes = {}
+        for j in range(len(points)):
+            if i == j:
+                continue
+            x1 = points[i][0]
+            x2 = points[j][0]
+            y1 = points[i][1]
+            y2 = points[j][1]
+            if x1 == x2:
+                slope = 'vertical'
+            else:
+                slope = (float(y1 - y2))/(float(x1 - x2))
+                # print(slope)
+            if slope in slopes:
+                slopes[slope] += 1
+            else:
+                slopes[slope] = 1
+        maxOfI = max(slopes.values()) + 1
+        maxDots = max(maxOfI, maxDots)
+
+    return maxDots
 
 ## Hashing two pointer
 ### Window string
@@ -81,6 +118,62 @@ def minWindow(A, B):
     else:
         sub = A[min_start:min_end + 1]
         return sub
+
+
+### Longest Substring without Repeat
+def lengthOfLongestSubstring(A):
+    # Parameters: A is a string
+    # Output: An integer, the length of the longest substring without a repeating character
+    # Examples:
+    #   'abcabcbb' -> 'abc' -> 3
+    #   'bbbbbb' -> 'b' -> 1
+    # Approach:
+    #   Two pointers: beginning and end of substring
+    #   Start at 0 and move end right until hit a repeat or end of string. Increment length of substring.
+    #   Once a repeat is hit, move beginning right until a repeat is removed. Decrement length of substring.
+    #   Go back to moving end right until end of string.
+    maxLength = 1
+    seen = {}
+    start = 0
+    end = 0
+    seen[A[0]] = 1
+    length = 1
+
+    if len(A) < 2:
+        return len(A)
+
+    while (start < len(A)):
+        movedLeft = False
+        end += 1
+        while (end < len(A)):
+            character = A[end]
+            if character in seen:
+                seen[character] += 1
+                length += 1
+                break
+            else:
+                #print("end =", end, "substring=", A[start:end + 1])
+                length += 1
+                #print(length)
+                maxLength = max(length, maxLength)
+                seen[character] = 1
+                end += 1
+        counts = seen.values()
+        #print("counts=", counts)
+        while (max(counts) > 1):
+            popCharacter = A[start]
+            seen[popCharacter] -= 1
+            start += 1
+            if start < len(A):
+                length -= 1
+            movedLeft = True
+            counts = seen.values()
+        if movedLeft == False:
+            start += 1
+            if start < len(A):
+                length -= 1
+
+    return maxLength
 
 
 # LINKED LISTS
