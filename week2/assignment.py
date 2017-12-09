@@ -79,6 +79,7 @@ def minWindow(A, B):
     min_length = len(A) + 1
     min_start = curr_start
     min_end = curr_end
+    mark = 0
 
     dictb = {}
 
@@ -90,16 +91,16 @@ def minWindow(A, B):
     if len(dictb) == 0:
         return ""
     backup_dictb = copy.deepcopy(dictb)
+    curr_end = curr_start
 
-    for j in range(len(A)):
-        curr_start = j
-        curr_length = 0
-        dictb = copy.deepcopy(backup_dictb)
-        for i in range(j, len(A)):
-            curr_end = i
-            key = A[i]
+    while curr_start < len(A):
+        print("loop curr_start", curr_start)
+        print("loop curr_end", curr_end)
+        while curr_end < len(A) and len(dictb) > 0:
+            key = A[curr_end]
             if key in dictb:
                 value = dictb[key]
+                print("remove", key)
                 if value > 1:
                     dictb[key] -= 1
                 elif value == 1:
@@ -110,10 +111,38 @@ def minWindow(A, B):
                             min_start = curr_start
                             min_end = curr_end
                         min_length = min(curr_length, min_length)
+                        print("min_length_right", min_length)
                         break
             curr_length += 1
+            curr_end += 1
+            print("curr_end", curr_end)
+        popCharacter = A[curr_start]
+        print("pop", popCharacter)
+        if popCharacter in backup_dictb:
+            print("add", popCharacter)
+            if len(dictb) == 0:
+                mark = curr_start
+            if popCharacter in dictb:
+                dictb[popCharacter] += 1
+            else:
+                dictb[popCharacter] = 1
+            if len(dictb) == len(B):
+                if curr_length < min_length:
+                    min_start = mark
+                    min_end = curr_end
+                min_length = min(curr_length, min_length)
+                print("min_length_left", min_length)
+        # if len(dictb) == 0:
+        #     if curr_length < min_length:
+        #         min_start = curr_start
+        #         min_end = curr_end
+        #     min_length = min(curr_length, min_length)
+        #     print("min_length", min_length)
+        curr_start += 1
+        curr_length -= 1
 
     if min_length > len(A):
+        print("none")
         return ""
     else:
         sub = A[min_start:min_end + 1]
@@ -133,23 +162,25 @@ def lengthOfLongestSubstring(A):
     #   Once a repeat is hit, move beginning right until a repeat is removed. Decrement length of substring.
     #   Go back to moving end right until end of string.
     maxLength = 1
-    seen = {}
-    start = 0
-    end = 0
+    seen = {}             #{b: 2}
+    start = 0           #1
+    end = 0             #2
     seen[A[0]] = 1
-    length = 1
+    length = 1          #2
+    dupe = ""           #b
 
     if len(A) < 2:
         return len(A)
 
     while (start < len(A)):
-        movedLeft = False
+        dupe = ""
         end += 1
         while (end < len(A)):
-            character = A[end]
+            character = A[end]          #b
             if character in seen:
                 seen[character] += 1
                 length += 1
+                dupe = character
                 break
             else:
                 #print("end =", end, "substring=", A[start:end + 1])
@@ -158,19 +189,18 @@ def lengthOfLongestSubstring(A):
                 maxLength = max(length, maxLength)
                 seen[character] = 1
                 end += 1
-        counts = seen.values()
-        #print("counts=", counts)
-        while (max(counts) > 1):
+        if dupe == "":
+            break
+        while (start <= end):
             popCharacter = A[start]
-            seen[popCharacter] -= 1
-            start += 1
-            if start < len(A):
+            if popCharacter == dupe:
+                seen[popCharacter] -= 1
+                start += 1
                 length -= 1
-            movedLeft = True
-            counts = seen.values()
-        if movedLeft == False:
-            start += 1
-            if start < len(A):
+                break
+            else:
+                seen.pop(popCharacter, None)
+                start += 1
                 length -= 1
 
     return maxLength
