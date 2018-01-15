@@ -370,3 +370,106 @@ def sqrt(A):
 
 
     return root
+
+
+
+# CHALLENGES
+class TreeNode():
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+INT_MAX = sys.maxint # 9223372036854775807
+INT_MIN = -sys.maxint - 1 # -9223372036854775808
+
+def isBST(root_node):
+    return isBSTUtil(root_node, INT_MIN, INT_MAX)
+
+def isBSTUtil(node, mini, maxi):
+    # Parameter: A TreeNode representing the root of a tree
+    # Output: A boolean True if the tree is a BST and False if the tree is not
+    # BST rules:
+    #   self.left.value <= self.value and self.value < self.right.value
+    #   Any duplication allowed?
+    #   For root, min and max are integer bounds
+    #   For left of root, min is min integer but max is root value
+    #   For right of root, min is root value and max is max
+    if not node:   # have hit None
+        return True
+    node_value = node.value
+    if node_value < mini or node_value > maxi:
+        return False
+    if isBSTUtil(left_node, mini, node_value-1) and isBST(right_node, node_value + 1, maxi):  # Recursively check following values
+        return True
+    else:
+        return False
+
+def count_leaves(node):
+    # Parameter: A TreeNode representing the root of a tree
+    # Output: An integer representing the number of nodes with no children
+    if node == None:
+        return 0
+    left_node = node.left
+    right_node = node.right
+    if node.left == None and node.right == None:
+        return 1
+    else:
+        sum_leaves = count_leaves_util(left_node) + count_leaves_util(right_node)
+        return sum_leaves
+
+def compare_trees(tree1node, tree2node):
+    if tree1node == None and tree2node == None:
+        return True
+    elif tree1node != None and tree2node != None:
+        if tree1node.value == tree2node.value:
+            return (compare_trees(tree1node.left, tree2node.left) and compare_trees(tree1node.right, tree2node.right))
+        else:
+            return False
+    else:
+        return False
+
+def golden_leaf(node, target):
+    # Parameters: root is the root of a binary tree and target is an integer
+    # Perform: Calculate the sum of all nodes along the path from root to each leaf
+    # Hint: Use a breadth-first search
+    # Output: A boolean True if the tree contains such a path, False if the tree does not
+    # Approach:
+    #   Am I a leaf?
+    #       Yes: Adding me equal to target?
+    #       No: Adding me less or equal to target?
+    #           Yes: Try my left and right nodes
+    #           No: Quit
+    if not node:
+        return False
+    target = target - node.value
+    if not node.left and not node.right:
+        if target == 0:
+            return True
+        else:
+            return False
+    else:
+        if target > 0:
+            return (sum_nodes(node.left, target) or sum_nodes(node.right, target))
+        else:
+            return False
+
+def golden_path(node, target):
+    # Parameters: root is the root of a binary tree and target is an integer
+    # Perform: Calculate the sum of all nodes along the path from root to each leaf
+    # Hint: Use a depth-first search
+    # Output: A list of lists of integers containing the node values of all paths to golden leaves
+    # Approach:
+    #   Am I a leaf?
+    #       Yes: Adding me equal to target?
+    #           Yes: Append my list to the answer
+    #           No: Forget my list
+    #       No: Adding me less or equal to target?
+    #           Yes:    Append me to the list and pass it to left and right
+    #           No: Forget my list
+    answer = []
+
+def recurse_path(node, target):
+
+
+# INTERVIEWS
