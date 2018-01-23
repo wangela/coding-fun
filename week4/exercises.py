@@ -40,6 +40,63 @@ def combine_util_alt(A, B):
                 answer.append(combo)
     return answer
 
+## Bruteforce Builder
+### Letter Phone
+digits = list(range(10))
+for i, digit in enumerate(digits):
+	digits[i] = str(digit)
+letters = ["0", "1", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"]
+mappings = dict(zip(digits, letters))
+
+def letterCombinations(A):
+    # Parameters: A is a digit string
+    # Output: A list of all letter combinations that the number could represent,
+    #       lexigraphically sorted
+    # Example:
+    #   Input: "23"
+    #   Output: ["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"]
+    #   "0" -> "0"
+    #   "1" -> "1"
+    if len(A) == 1:
+        letters = mappings[A]
+        starter_list = []
+        for letter in letters:
+            starter_list.append(letter)
+        return starter_list
+    else:
+        digits_tail = A[-1]
+        digits_head = A[:-1]
+        tail_mapping = mappings[digits_tail]
+        combinations = []
+        for each in letterCombinations(digits_head):
+            for letter in tail_mapping:
+                concat_maps = each + letter
+                combinations.append(concat_maps)
+        return combinations
+
+## Permutations
+### Permutations
+def permute(A):
+    # Parameters: A list of unique numbers
+    # Output: All possible permutations of the numbers
+    # Example:
+    #   [1,2,3] -> [1,2,3], [1,3,2], [2,1,3], [2,3,1], [3,1,2], [3,2,1]
+    permutations = []
+    permute_util(A, permutations, 0, len(A))
+    return permutations
+
+
+def permute_util(A, combos, left, right):
+    if left == right:
+        print(A)
+        combos.append(A)
+    else:
+        for i in range(left, right):
+            A[i], A[left] = A[left], A[i]
+            print(i)
+            permute_util(A, combos, left+1, right)
+            A[i], A[left] = A[left], A[i]
+
 # BIT MANIPULATION
 ## Bit Play
 ### Number of 1 Bits
@@ -62,6 +119,20 @@ def numSetBits(A):
         A &= A - 1
         count += 1
     return count
+
+### Reverse Bits
+def reverse(A):
+    # Parameter: A is a 32-bit unsigned integer
+    # Output: Reverse the bits of the 32-bit unsigned integer
+    # Example:
+    #   x = 3, 0000 0000 0000 0000  0000 0000 0000 0011
+    #   ouput  1100 0000 0000 0000  0000 0000 0000 0000 = 3221225472
+    answer = 0
+    for n in range(32):
+        if A & (1 << n):
+            answer += 2 ** (31 - n)
+    return answer
+
 
 ## Bit Manipulation
 ### Single Number
@@ -87,20 +158,9 @@ def findMinXor(A):
     #   Output 3 (4 ^ 7)
     A.sort()
     length = len(A)
-    last = length - 1
-    min_xor = A[last] ^ A[last - 1]
-    print(min_xor)
-    latest = A[last - 1]
-    for i in range(last - 2, -1, -1):
-        if A[i] > min_xor:
-            latest = A[i]
-            continue
-        else:
-            curr_xor = latest ^ A[i]
-            if curr_xor < min_xor:
-                min_xor = curr_xor
-                print(min_xor)
-            latest = A[i]
+    for i in range(0, length - 1):
+        curr_xor = A[i] ^ A[i + 1]
+        min_xor = min(min_xor, curr_xor)
     return min_xor
 
 def findMinXor_naive(A):
@@ -214,3 +274,100 @@ def permute_util(A, start, end):
         for each in A:
             permutations.append(each)
             for permutation in permute_util(A)
+
+# HackerRank test
+## Problem 1 - Pascal's Triangle
+def pascalTriangle(k):
+    # Parameter: k is an integer, 2 <= k <= 25
+    # Output: Print the first k rows of Pascal's Triangle.
+    #   Separate entries of the triangle with a space
+    #   n = 0 to n = k-1
+    line = ""
+    if k == 1:
+        line = "1"
+    elif k == 2:
+        pascalTriangle(1)
+        line = "1 1"
+    else:
+        prev = pascalTriangle(k-1).split()
+        line += "1"
+        for r in range(1, k-1):
+                line += " " + str(int(prev[r]) + int(prev[r - 1]))
+        line += " 1"
+    print(line)
+    return line
+
+1 4
+5 4
+5 9
+14 9
+
+1 2
+3 2
+3 5
+3 8
+
+## Problem 2 - Is Possible
+def isPossible(a, b, c, d):
+    # Parameters: a, b, c, d where 1 <= a, b, c, d <= 1000
+    # Perform: Can (c, d) come from (a, b) by performing 0+ operations of (a + b, b) or (a, a + b)
+    # Output: "Yes" or "No"
+    # Example: (1, 4, 5, 14) -> "Yes" because (1, 4) -> (5, 4) -> (5, 9)
+    #       (1, 4, 5, 9) -> (1, 4, 0, 9) -> (1, 4, 0, 4) OR (1, 4, 14, 14) -> (1, 4, 0, 4)
+    # Example: (1, 2, 3, 6) -> "No" becuase (1, 2) -> (3, 2) -> (3, 5) and (1, 2) -> (1, 3)-> (1, 4...6)
+    if c == a and d == b:
+        return "Yes"
+    elif c < a or d < b:
+        return "No"
+    elif (c % (a + b) == 0) and (d % (a + b) == a or d % (a + b) == b):
+        return "Yes"
+    elif (d % (a + b) == 0) and (c % (a + b) == a or c % (a + b) == b):
+        return "Yes"
+    elif (c % (a + b) == a or c % (a + b) == b) and (d % (a + b) == a or d % (a + b) == b):
+        return "Yes"
+    elif isPossible(a, b, c - (a + b), d) == "Yes" or isPossible(a, b, c, d - (a + b)) == "Yes":
+        return "Yes"
+    else:
+        return "No"
+
+
+## Problem 3 - Counter Game
+def counterGame(tests):
+    # Parameter: tests is a string array where tests[i] = N.
+    # Perform: Louise goes first
+    #       If N == 1 at the beginning, Richard wins
+    #           If N is not a power of 2, reduce the counter by the largest power of 2 less than N
+    #           If N is a power of 2, reduce the counter by half of N
+    #       Next player takes the result as their N
+    #       If N == 1 at the end of the turn, player wins
+    # Output: For each i in tests, print the winner of that game
+    # Example: N = 6. Louise 110 << 1 = 10 Richard << 1 = 1 -> Richard
+    for input in tests:
+        n = int(input)
+        if n == 1:
+            print("Richard")
+            continue
+        else:
+            player = "Richard"
+            while n > 1:
+                if int(n) & int(n-1):
+                    x = bitCount(n)
+                    n -= 2 ** (x - 1)
+                else:
+                    n /= 2
+                if player == "Louise":
+                    player = "Richard"
+                else:
+                    player = "Louise"
+            if n == 1:
+                print(player)
+                continue
+    return
+
+
+def bitCount(N):
+    num_bits = 0
+    N = int(N)
+    while N >> num_bits:
+        num_bits += 1
+    return num_bits
