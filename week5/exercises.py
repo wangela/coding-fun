@@ -164,3 +164,148 @@ def solve_inefficient(A, B, C, D):
     answer.sort()
     answer = answer[:D]
     return answer
+
+## Graph Connectivity
+### Commutable Islands
+from collections import deque
+class Island:
+    def __init__(self, x):
+        self.id = x
+        self.bridges = set()
+
+    def add_bridge(self, y):
+        self.bridges.add(y)
+
+    def copy(self):
+        new_island = Island(self.id)
+        new_island.bridges = self.bridges.copy()
+        return new_island
+
+class Bridge:
+    def __init__(self, x, y):
+        self.destination = x
+        self.cost = y
+
+def solve(A, B):
+    cost = 0
+    B.sort(key = lambda x: x[2])
+    islands = {}
+    forest = set()
+    bridges = []
+    bridge_id = 0
+    for island_index in range(A):
+        islands[island_index] = (9223372036854775807, "flag", []) # C = maxint, E = "flag"
+    for bridge in B:
+        start = islands[bridge[0] - 1]
+        end = islands[bridge[1] - 1]
+        start[2].append((bridge[1] - 1, bridge[2]))
+        end[2].append((bridge[0] - 1, bridge[2]))
+        if bridge[2] < start[0]:
+            c = bridge[2]
+            start[0] = c
+            if start[1] != "flag":
+                e = bridge
+                start[1] = e
+        for
+    first_island = B[0][0]
+    forest.add(first_island)
+    first_island_bridges = islands[first_island]
+    while len(islands) > 0:
+        first_island_bridges.sort(key = lambda x: x[1])
+        for bridge in first_island_bridges:
+            if bridge[0] in islands:
+                print("bridge to", bridge[0], "for", bridge[1])
+                cost += bridge[1]
+                next_island = bridge[0]
+                first_island_bridges = islands.pop(next_island)
+                break
+            else:
+                continue
+    return cost
+
+def solve_partial(A, B):
+    # Parameters: A is an integer, the number of islands. B is a list of lists of integers,
+    #       representing bridges.  Each list has 3 integers where B[i][0] and B[i][1] are
+    #       the two islands connected by the bridge and B[i][2] is the cost of crossing
+    #       that bridge.
+    # Output: The minimum cost of bridges to connect all the islands
+    # Example: solve(4, [[1, 2, 1], [2, 3, 4], [1, 4, 3], [4, 3, 2], [1, 3, 10]]) ->
+    #       select B[0] + B[2] + B[3] to connect all the islands for a cost of 1 + 3 + 2 = 6
+    #       -> 6
+    cost = 0
+    B.sort(key = lambda x: x[2])
+    islands = []
+    needPaths = set()
+    bridges = set()
+    bridge_id = 0
+    for island_index in range(A):
+        new_island = Island(island_index)
+        islands.append(new_island)
+        needPaths.add(island_index)
+    needPaths.remove(0)
+    for bridge in B:
+        needed_bridge = False
+        if len(needPaths) == 0:
+            return cost
+        stash_start = islands[bridge[0] - 1]
+        stash_end = islands[bridge[1] - 1]
+        temp_start = islands[bridge[0] - 1].copy()
+        temp_end = islands[bridge[1] - 1].copy()
+        temp_start.add_bridge(islands[bridge[1] - 1])
+        temp_end.add_bridge(islands[bridge[0] - 1])
+        islands[bridge[0] - 1] = temp_start
+        islands[bridge[1] - 1] = temp_end
+        first_island = islands[0]
+        bridge_id += 1
+        print("bridge" + str(bridge_id))
+        for index in needPaths.copy():
+            current_island = islands[index]
+            if hasPathBFS(first_island, current_island):
+                needPaths.remove(index)
+                print(str(index) + "no longer needs paths")
+                if bridge_id not in bridges:
+                    bridges.add(bridge_id)
+                    cost += bridge[2]
+                    needed_bridge = True
+                if len(needPaths) == 0:
+                    return cost
+        if not needed_bridge:
+            islands[bridge[0] - 1] = stash_start
+            islands[bridge[1] - 1] = stash_end
+    return "no solution found"
+
+def hasPathBFS(start, destination):
+    visit_list = deque([start])
+    visited = set()
+    visit_list.append(start)
+    while len(visit_list) > 0:
+        current_island = visit_list.popleft()
+        if current_island == destination:
+            return True
+        if current_island in visited:
+            continue
+        visited.add(current_island)
+
+        for child in current_island.bridges:
+            visit_list.append(child)
+    return False
+
+
+## CHALLENGES
+### Capture Regions on Board
+def Location:
+    def __init__(self, n, e, s, w):
+        self.north = n
+        self.east = e
+        self.south = s
+        self.west = w
+
+def capture_regions(board):
+    # Parameters: board is a 2D matrix where every location is an X or an O
+    # Output: Return the same board where for every location in a region
+    #   surrounded by X's, flip the location to O
+
+
+
+## INTERVIEWS
+### Journey to the Moon
