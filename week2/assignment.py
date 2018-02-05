@@ -359,3 +359,64 @@ def swapPairs(A):
 
     # odd number of nodes, end reached
     return head
+
+## List 2 pointer
+### Remove duplicates from sorted list
+class ListNode:
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+
+def deleteDuplicates(A):
+    head = A
+    current = head
+
+    if head == None:
+        return head
+    else:
+        while current != None:
+            the_next = current.next
+            if the_next == None:
+                break
+            else:
+                while current.val == the_next.val:
+                    current.next = the_next.next
+                    the_next = current.next
+                    if the_next == None:
+                        break
+            current = current.next
+
+    return head
+
+### Remove nth node from list end
+def removeNthNodeFromListEnd(A, B):
+    # Parameters: A is the head node of a linked list; B is an integer
+    # Output: The head node of a linked list with the B'th node from list end removed
+    #       If the size of the list is <B, remove the first node
+    # Goal: O(1) space
+    # [1], 3 -> None
+    # [1, 2], 3 -> [2]
+    # [1, 2, 3], 3 -> [2, 3]
+    # [1, 2, 3, 4], 3 -> [1, 3, 4]
+    head = A
+    before_B = None
+    node_B = head
+    forward = head
+
+    if head == None:
+        return head
+
+    for i in range(B):
+        if forward.next == None:
+            head = head.next
+            return head
+        forward = forward.next
+
+    while forward != None:
+        before_B = node_B
+        node_B = node_B.next
+        forward = forward.next
+
+    before_B.next = node_B.next
+
+    return head
