@@ -205,6 +205,76 @@ def lengthOfLongestSubstring(A):
 
     return maxLength
 
+## Hash Search
+### Valid Sudoku
+def isValidSudoku(A):
+    # Parameter: A is a list of strings corresponding to a partially filled sudoku
+    #   board where a digit is a filled box and a . is an empty box.
+    # Output: 0 or 1 if it's an invalid or valid sudoku board
+    # Set up a dict for each row, for each column, and each box
+
+    for r in range(9):
+        row_check = set()
+        # print("row", r)
+        for x in A[r]:
+            if x == ".":
+                continue
+            elif x in row_check:
+                # print(x)
+                return 0
+            else:
+                # print(x)
+                row_check.add(x)
+
+    for c in range(9):
+        column_check = set()
+        # print("column", c)
+        for x in range(9):
+            i = A[x][c]
+            if i == ".":
+                continue
+            elif i in column_check:
+                # print(i)
+                return 0
+            else:
+                # print(i)
+                column_check.add(i)
+
+    for b in range(3):
+        for x in range(3):
+            box_check = set()
+            # print("box", x, b)
+            for y in range(3):
+                for z in range(3):
+                    n = A[(3 * x) + y][(3 * b) + z]
+                    if n == ".":
+                        continue
+                    elif n in box_check:
+                        # print(n)
+                        return 0
+                    else:
+                        # print(n)
+                        box_check.add(n)
+
+    return 1
+
+
+### Diffk II
+def diffPossible(A, B):
+    # Parameters: A is a tuple of integers, B is a non-negative integer
+    # Perform: Find if there are 2 indices i and j such that A[i] - A[j] = B where i != j
+    # Output: 0 if none exist and 1 if they exist
+    # Example: [1, 5, 3] 2 -> 1
+    options = set()
+    for first in A:
+        plus = first + B
+        minus = first - B
+        if plus in options or minus in options:
+            return 1
+        options.insert(first)
+
+    return 0
+
 
 # LINKED LISTS
 ## List sort
