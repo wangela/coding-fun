@@ -165,6 +165,61 @@ def solve_inefficient(A, B, C, D):
     answer = answer[:D]
     return answer
 
+## Graph Adhoc
+### Convert Sorted List to Binary Tree
+class ListNode:
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+
+def getDepth(A):
+    current_node = A
+    left_node = A.left
+    right_node = A.right
+    height = 0
+
+    while current_node:
+        height += 1
+        height += max(getDepth(left_node), getDepth(right_node))
+
+    return height
+
+def countListLength(A):
+    current_node = A
+    length = 0
+
+    while current_node:
+        length += 1
+        current_node = current_node.next
+
+    return length
+
+def sortedListToBST_util(self,start, end):
+    if start == end:
+        return None
+    else:
+        mid = start + (end - start)/2
+        left_head = sortedListToBST_util(start, mid)
+        tree_head = TreeNode(self.head.val)
+        tree_head.left = left_head
+        self.head = self.head.next
+        right_head = sortedListToBST_util(mid + 1, end)
+        tree_head.right = right_head
+        return tree_head
+
+def sortedListToBST(self.head, A):
+    # Parameter: A is a ListNode, the head node of a sorted singly linked list
+    # Output: The head node (TreeNode) of a height-balanced BST (depth of subtrees of every node
+    #      never differ by more than 1)
+    # Example: A 1 -> 2 -> 3, output 2
+    #                               1  3
+    current_node = A
+    length = countListLength(current_node)
+    self.head = A
+    tree_head = self.sortedListToBST_util(0, length)
+
+    return tree_head
+
 ## Graph Connectivity
 ### Commutable Islands
 from collections import deque
