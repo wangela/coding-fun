@@ -1,5 +1,55 @@
 # RECURSION / BACKTRACKING
 ## Subsets
+### Subset
+def subsets_util(input_list, A, current_index):
+    if current_index == len(A):
+        return
+
+    for i in range(len(input_list) - 1, -1, -1):
+        clone_subset = copy.deepcopy(input_list[i])
+        clone_subset.append(A[current_index])
+        input_list.append(clone_subset)
+
+    subsets_util(input_list, A, current_index + 1)
+
+def subsets(A):
+    # Parameters: A is a set of distinct integers
+    # Output: Return all possible subsets in ascending order, without duplicates
+    #   with elements appearing in non-descending order, but it doesn't have to be sorted
+    # Example: [1, 2, 3] ->
+    #   [[], [1], [1,2], [1,2,3], [1,3], [2], [2, 3], [3]]
+    result = [[]]
+    subsets_util(result, A, 0)
+    return result
+
+def subsets_editorial(A):
+    A.sort()
+    result = [[]]
+    for each in A:
+        result += [x + [e] for x in result]
+    return sorted(result)
+
+
+### Subsets II
+def subsetsWithDup(A):
+    # Parameters: A is a collection of integers that might contain duplicates
+    # Output: All possible subsets sorted, WITHOUT duplicate subsets
+    A.sort()
+    result = [[]]
+    result_set = set()
+    for each in A:
+        result_copy = copy.deepcopy(result)
+        for item in result_copy:
+            addition = item + [each]
+            addition_tuple = tuple(addition)
+            if addition_tuple in result_set:
+                continue
+            else:
+                result.append(addition)
+                result_set.add(addition_tuple)
+    return sorted(result)
+
+
 ### Combinations
 def combine(A, B):
     # Parameters: A and B are integers
@@ -74,6 +124,30 @@ def letterCombinations(A):
                 combinations.append(concat_maps)
         return combinations
 
+## Pruned Builder
+### Generate All Parentheses II
+def generateParenthesis(A):
+    # Parameter: A is an integer
+    # Output: A list of strings providing all combinations of well-formed parentheses
+    #   of length 2*n. The returned list should be sorted.
+    # Example: 1 -> ["()"]
+    # Example: 2 -> ["(())", "()()"]
+    # Example: 3 -> ["((()))", "(()())", "(())()", "()(())", "()()()"]
+    # Example: 5 -> [((((())))) (((()()))) (((())())) (((()))()) (((())))() ((()(()))) ((()()())) ((()())()) ((()()))() ((())(())) ((())()()) ((())())() ((()))(()) ((()))()() (()((()))) (()(()())) (()(())()) (()(()))() (()()(())) (()()()()) (()()())() (()())(()) (()())()() (())((())) (())(()()) (())(())() (())()(()) (())()()() ()(((()))) ()((()())) ()((())()) ()((()))() ()(()(())) ()(()()()) ()(()())() ()(())(()) ()(())()() ()()((())) ()()(()()) ()()(())() ()()()(()) ()()()()()]
+    result = []
+    def generateParenthesis_util(sofar, open, close):
+        if len(sofar) == 2*A:
+            result.append(sofar)
+            return
+        else:
+            if open < A:
+                generateParenthesis_util(sofar + "(", open + 1, close)
+            if open > close:
+                generateParenthesis_util(sofar + ")", open, close + 1)
+    generateParenthesis_util("", 0, 0)
+    return result
+
+
 ## Permutations
 ### Permutations
 def permute(A):
@@ -96,6 +170,31 @@ def permute_util(A, combos, left, right):
             print(i)
             permute_util(A, combos, left+1, right)
             A[i], A[left] = A[left], A[i]
+
+
+## Maths and Backtracking
+### Gray Code
+def grayCode(A):
+    # Parameter: A is a non-negative integer representing the total number of bits in the code
+    # Perform: Gray code sequence starts with 0 and the binary numerals of successive values
+    #   differ in only one bit
+    # Output: Print the sequence of gray code
+    # Example: n = 2 -> 00, 01, 11, 10 -> [0, 1, 3, 2]
+    # Example: n = 3 -> 000, 001, 011, 010, 110, 111, 101, 100 -> [0, 1, 3, 2, 6, 7, 5, 4]
+    result = []
+    if A == 0:
+        return [0]
+    elif A == 1:
+        return [0, 1]
+    else:
+        smaller = grayCode(A - 1)
+        for each in smaller:
+            result.append(each)
+        smaller.reverse()
+        for each in smaller:
+            result.append(2 ** (A - 1) + each)
+
+    return result
 
 # BIT MANIPULATION
 ## Bit Play
