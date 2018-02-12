@@ -346,6 +346,70 @@ def hasPathBFS(start, destination):
     return False
 
 
+## Depth first search
+### Largest Distance Between Nodes of a Tree
+def dfs(Node):
+    
+
+def height(A, graph_dict):
+    if A == None:
+        return 0
+    elif graph_dict[A] == []:
+        return 1
+    else:
+        deepest = 0
+        for each in graph_dict[A]:
+            deepest = max(deepest, height(each, graph_dict))
+        return deepest + 1
+
+def diameter(A, graph_dict):
+    if A == None:
+        return 0
+    elif graph_dict[A] == []:
+        return 0
+    else:
+        highest1 = 0
+        highest2 = 0
+        for each in graph_dict[A]:
+            current_height = height(each, graph_dict)
+            if current_height > highest1:
+                highest2 = highest1
+                highest1 = current_height
+            else if current_height > highest2:
+                highest2 = current_height
+
+        max_diameter = 0
+        for child in graph_dict[A]:
+            max_diameter = max(max_diameter, diameter(child, graph_dict))
+
+        return max(max_diameter, highest1 + highest2 + 1)
+
+def solve(A):
+    # Parameter: A is the list of integers of an unweighted rooted tree with 2 <= A <= 40,000 nodes
+    #   Tree is given as an array with nodes numbered 0 to A - 1. For P[i] each value is the
+    #       number of the node's parent. The i with value -1 is the root.
+    # Output: An integer, the largest distance (number of edges)  between two nodes in a tree
+    # Example: [-1, 0, 0, 0, 3] -> 1 -> 0 -> 3 -> 4 -> 3
+    tree = dict()
+    root = -1
+    for i, each in enumerate(A):
+        if each == -1:
+            if i in tree:
+                root = i
+            else:
+                tree[i] = []
+                root = i
+            continue
+        else:
+            if each in tree:
+                tree[each].append(i)
+            else:
+                tree[each] = [i]
+            if i not in tree:
+                tree[i] = []
+
+    return diameter(root, tree)
+
 ## CHALLENGES
 ### Capture Regions on Board
 def Location:
