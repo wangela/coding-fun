@@ -348,8 +348,11 @@ def hasPathBFS(start, destination):
 
 ## Depth first search
 ### Largest Distance Between Nodes of a Tree
-def dfs(Node):
-    
+def bfs(node, graph_dict):
+    distances = []
+
+    for adjacent in graph_dict[node]:
+        temp_stack.push()
 
 def height(A, graph_dict):
     if A == None:
@@ -390,6 +393,8 @@ def solve(A):
     #       number of the node's parent. The i with value -1 is the root.
     # Output: An integer, the largest distance (number of edges)  between two nodes in a tree
     # Example: [-1, 0, 0, 0, 3] -> 1 -> 0 -> 3 -> 4 -> 3
+    if len(A) == 2:
+        return 1
     tree = dict()
     root = -1
     for i, each in enumerate(A):
@@ -405,10 +410,36 @@ def solve(A):
                 tree[each].append(i)
             else:
                 tree[each] = [i]
-            if i not in tree:
-                tree[i] = []
+            if i in tree:
+                tree[i].append(each)
+            else:
+                tree[i] = [each]
+    distances = []
+    for v in range(len(A)):
+        distances.append(-1)
+    temp_stack = []
+    temp_stack.append(0)
+    distances[0] = 0
+    while len(temp_stack) > 0:
+        t = temp_stack.pop()
+        for each in tree[t]:
+            v = tree[t]
+            if distances[v] == -1:
+                temp_stack.insert(0, v)
+                distances[v] = distances[t] + 1
 
-    return diameter(root, tree)
+    max_distance = 0
+    furthest_node = 0
+    for i, steps in enumerate(distances):
+        if steps > max_distance:
+            max_distance = steps
+            furthest_node = i
+
+    temp_stack = tree[furthest_node]
+    distances = []
+    for v in range(len(A)):
+        distances.append(-1)
+    distances[furthest_node] = 0
 
 ## CHALLENGES
 ### Capture Regions on Board
@@ -425,6 +456,77 @@ def capture_regions(board):
     #   surrounded by X's, flip the location to O
 
 
+### Word Ladder I
+from collections import deque
+def ladderLength(start, end, dictV):
+    # Parameters: start and end are strings, dictV is a list of strings
+    # Perform: Count a step for each time you change 1 letter to get from start to end
+    # Output: Integer, the number of steps
+    d = {}
+    q = deque([start])
+    nq = deque()
+    steps = 1
+    diff = 0
+    possible = False
+
+    for entry in dictV:
+        for index, letter in enumerate(entry):
+            mod = entry[0:index] + "_" + entry[index + 1:]
+            if mod in d:
+                d[mod].append(entry)
+            else:
+                d[mod] = [entry]
+
+    for ind, let in enumerate(end):
+        mad = end[0:ind] + "_" + end[ind + 1:]
+        if mad in d:
+            d[mad].append(end)
+            possible = True
+        if let != start[ind]:
+            diff += 1
+    if diff == 1:
+        return 2
+    if not possible:
+        return 0
+
+    while len(q) > 0:
+        nq = deque()
+        while len(q) > 0:
+            current = q.popleft()
+            if current == end:
+                return steps
+            for i, l in enumerate(current):
+                m = current[0:i] + "_" + current[i + 1:]
+                if m in d:
+                    nq += d[m]
+        steps += 1
+        q = nq
+
+def ladderLength(beginWord, endWord, wordList):
+    """
+    :type beginWord: str
+    :type endWord: str
+    :type wordList: List[str]
+    :rtype: int
+    """
+    distance, cur, visited, lookup = 0, [beginWord], set([beginWord]), set(wordList)
+
+    while cur:
+        next_queue = []
+
+        for word in cur:
+            if word == endWord:
+                return distance + 1
+            for i in range(len(word)):
+                for j in 'abcdefghijklmnopqrstuvwxyz':
+                    candidate = word[:i] + j + word[i + 1:]
+                    if candidate not in visited and candidate in lookup:
+                        next_queue.append(candidate)
+                        visited.add(candidate)
+        distance += 1
+        cur = next_queue
+
+    return 0
 
 ## INTERVIEWS
 ### Journey to the Moon
