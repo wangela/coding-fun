@@ -14,7 +14,7 @@ I seek out coding challenges from a variety of sources, including:
 
 - [Advent of Code](http://adventofcode.com/): 25 days of creative programming challenges in December. Subsequent challenges relate to the days before.
 
-- [Google Code Jam](https://codejam.withgoogle.com/codejam/): Annual synchronous coding competitions. Clever and unique problems custom-designed for the compeitions.
+- [Google Code Jam](https://codejam.withgoogle.com/codejam/): Annual synchronous coding competitions. Clever and unique problems custom-designed for the competitions.
 
 ## Topics
 
