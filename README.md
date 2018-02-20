@@ -8,13 +8,13 @@ Languages: Swift, Python, and JavaScript
 
 I seek out coding challenges from a variety of sources, including:
 
-[InterviewBit](https://www.interviewbit.com) and [HackerRank](hackerrank.com) via [CodePath's](http://codepath.com/) alumni community. Most efficient way to get as much practice as you have time for.
+- [InterviewBit](https://www.interviewbit.com) and [HackerRank](hackerrank.com) via [CodePath's](http://codepath.com/) alumni community. Most efficient way to get as much practice as you have time for.
 
-[Interview Cake](https://www.interviewcake.com/): one new programming exercise emailed per week. Cute descriptions of classic interview questions.
+- [Interview Cake](https://www.interviewcake.com/): one new programming exercise emailed per week. Cute descriptions of classic interview questions.
 
-[Advent of Code](http://adventofcode.com/): 25 days of creative programming challenges in December. Subsequent challenges relate to the days before.
+- [Advent of Code](http://adventofcode.com/): 25 days of creative programming challenges in December. Subsequent challenges relate to the days before.
 
-[Google Code Jam](https://codejam.withgoogle.com/codejam/): Annual synchronous coding competitions. Clever and unique problems custom-designed for the compeitions.
+- [Google Code Jam](https://codejam.withgoogle.com/codejam/): Annual synchronous coding competitions. Clever and unique problems custom-designed for the compeitions.
 
 ## Topics
 
