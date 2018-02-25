@@ -65,7 +65,7 @@ def maxPathUtil(A):
     if A == None:
         return 0
     elif A.left == None and A.right == None:
-        self.max_sum = A.val
+        self.max_sum = max(self.max_sum, A.val)
         return A.val
 
     left = self.maxPathUtil(A.left)
@@ -91,15 +91,6 @@ def maxPathSum(A):
 
 ## 2 String DP
 ### Edit Distance
-def editDistance(A, index_a, B, index_b):
-    if A[index_a] == B[index_b]:
-        return editDistance(A, index_a + 1, B, index_b + 1)
-    else:
-        insertion_dist = 1 + editDistance(A, index_a, B, index_b + 1)
-        deletion_dist = 1 + editDistance(A, index_a + 1, B, index_b)
-        replace_dist = 1 + editDistance(A, index_a + 1, B, index_b + 1)
-        return min(insertion_dist, deletion_dist, replace_dist)
-
 def minDistance(A, B):
     # Parameters: A and B are words (strings).
     # Perform: Each operation is 1 step: insert a character, remove a character,
@@ -130,6 +121,42 @@ def minDistance(A, B):
 
     return edits[rows - 1][cols - 1]
 
+
+### Longest Increasing Subsequence
+def lis(A):
+    # Parameters: A is a tuple of integers
+    # Output: An integer, the length of the longest increasing subsequence
+    # Example: [0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15] -> [0, 2, 6, 9, 13, 15]
+    #   or [0, 4, 6, 9, 11, 15] or [0, 4, 6, 9, 13, 15] -> 6
+    if len(A) == 0:
+        return 0
+
+    subsequences = dict()       # key = value, subsequences = the longest subsequence smaller
+    max_lengths = [1] * len(A)
+    subsequences[A[0]] = []
+
+    for i in range(1, len(A)):
+        current_max = 1
+        max_sub = 0
+        for j in range(i - 1, -1, -1):
+            check = A[j]
+            if check < A[i]:
+                if check in subsequences:
+                    j_sub = list(subsequences[check])
+                    j_sub.append(check)
+                    if len(j_sub) > max_sub:
+                        subsequences[A[i]] = j_sub
+                        max_sub = len(j_sub)
+                else:
+                    subsequences[A[i]] = [check]
+                    max_sub = 1
+        if A[i] not in subsequences:
+            subsequences[A[i]] = []
+        max_lengths[i] = max(max_sub + 1, max_lengths[i - 1])
+
+    return max_lengths[-1]
+
+
 ## Derived DP
 ### Max Sum Without Adjacent Elements
 def max_sum(grid):
@@ -159,3 +186,27 @@ def max_sum(grid):
             maxsums[i] = max(maxsums[i - 1], max(grid[0][i], grid[1][i]) + maxsums[i - 2])
 
     return maxsums[-1]
+
+## Greedy or DP
+### Jump Game Array
+def canJump(A):
+    # Parameter: A is a list of non-negative integers.
+    # Perform: At each index, the integer represents the maximum jump length at that position
+    # Output: An integer 1 if you are able to reach the last index, 0 if not
+    # Example: [2, 3, 1, 1, 4] -> [2, 1, 1] -> 1
+    #          [3, 2,1, 0, 4] -> [x, 0] -> 0
+    #           [] -> 1
+    #           [3] -> 1, [0] -> 1
+    goal = len(A) - 1
+    if goal <= 0:
+        return 1
+    max_landing = 0
+
+    for index, i in enumerate(A):
+        if max_landing < index:
+            return 0
+        max_landing = max(max_landing, index + i)
+        if max_landing >= goal:
+            return 1
+
+    return 0
