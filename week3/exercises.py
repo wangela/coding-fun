@@ -245,6 +245,106 @@ def nchoc(A, B):
     return remainder
 
 
+### N max pair combinations
+import heapq
+def solve(A, B):
+    # Parameters: A, B are lists of integers, both of size N
+    # Perform: Find the maximum N elements from the sum combinations (Ai + Bj)
+    # Output: A list of integers
+    # Example: [1, 4, 2, 3] and [2, 5, 1, 6] -> [4 + 6, 3 + 6, 4 + 5, 2 + 6] -> [10, 9, 9, 8]
+    # Approach: Sort the input lists descending,
+    #   Add the sum of largest two elements from each list to a max heap,
+    #   Then for N times pop the top of the heap and push on the next two sums
+    #   (incrementing index of each list by one), making sure the combinations
+    #   of indices hasn't already been added before.
+
+    h = []
+    answer = []
+    n = len(A)
+    if n == 0:
+        return []
+    visited = set()
+    negative_a = [-x for x in A]    # negate because heapq is a min heap and we need a max heap
+    negative_b = [-x for x in B]
+    sorted_a = sorted(negative_a)
+    sorted_b = sorted(negative_b)
+    t = (sorted_a[0] + sorted_b[0], (0, 0))
+    visited.add(t[1])
+    heapq.heappush(h, t)
+
+    for x in range(n):
+        top = heapq.heappop(h)
+        top_value = top[0]
+        top_lefti = top[1][0]
+        top_rightj = top[1][1]
+        push_lefti = top_lefti + 1
+        push_rightj = top_rightj + 1
+        if push_lefti >= n:
+            push_lefti = top_lefti
+        if push_rightj >= n:
+            push_rightj = top_rightj
+        left_coordinates = (push_lefti, top_rightj)
+        right_coordinates = (top_lefti, push_rightj)
+
+        answer.append(-top_value)   # negate when we add to the answer to restore to positive
+        if left_coordinates not in visited:
+            visited.add(left_coordinates)
+            t = (sorted_a[left_coordinates[0]] + sorted_b[left_coordinates[1]], left_coordinates)
+            heapq.heappush(h, t)
+        if right_coordinates not in visited:
+            visited.add(right_coordinates)
+            t = (sorted_a[right_coordinates[0]] + sorted_b[right_coordinates[1]], right_coordinates)
+            heapq.heappush(h, t)
+
+    return answer
+
+
+### Merge K sorted lists
+class ListNode:
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+
+def mergeKLists(A):
+    # Input: A is a list of sorted linked lists
+    # Perform: Merge the multiple linked lists into a single sorted linked list
+    # Output: Return the head of a linked list
+    # Example: [1, 10, 20], [4, 11, 13], [3, 8, 9] -> [1, 3, 4, 8, 9, 10, 11, 13, 20]
+    h = []
+    k = len(A)
+    answer = ListNode(None)
+
+    for i in range(k):
+        curr_list_node = A[i]
+        while curr_list_node != None:
+            curr_value = curr_list_node.val
+            next_node = curr_list_node.next
+            heapq.heappush(h, curr_value)
+            curr_list_node = next_node
+
+    if len(h) > 0:
+        answer.val = heapq.heappop(h)
+        last_node = answer
+
+    while len(h) > 0:
+        last_node.next = ListNode(heapq.heappop(h))
+        last_node = last_node.next
+
+    return answer
+
+
+## Heap Math
+### Ways to Form Max Heap
+def solve(A):
+    # Parameter: A is an integer, A <= 100
+    # Perform: Determine how distinct max heaps can be made from n distinct integers
+    # Output: An integer, modulo 1000000007
+    # Example: 4 distinct integers -> 3 distinct max heaps
+
+
+
+
+
 ## Heapmap
 ### Distinct Numbers in Window
 def dNums(A, B):
@@ -472,4 +572,132 @@ def golden_path(node, target):
 def recurse_path(node, target):
 
 
-# INTERVIEWS
+# Simple Search
+def searchRange(A, B):
+    # Parameters: A is a tuple of sorted integers, B is an integer
+    # Perform: Find the starting and ending index of the target value
+    # Return: A list of integers representing the starting and ending indices of the integer.
+    #   If not found, return [-1, -1]
+    # Goal: Runtime complexity must be O(log n)
+    # Example: [5, 7, 7, 8, 8, 10], 8 -> [3, 4]
+    length = len(A)
+    answer = [-1, -1]
+    if length == 0:
+        return answer
+    start = 0
+    end = length - 1
+    while start < end:
+        mid = (start + end) // 2
+        if A[mid] == B:
+            end = mid
+        elif A[mid] < B:
+            start = mid + 1
+        else: # A[mid] > B
+            end = mid - 1
+    if A[start] != B:
+        return answer
+    answer[0] = start
+    end = length - 1
+    while start < end:
+        mid = (start + end + 1) // 2
+        if A[mid] == B:
+            start = mid
+        else: # A[mid] > B
+            end = mid - 1
+    answer[1] = start
+    return answer
+
+## Traversal
+### Vertical Order Traversal
+
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+def votHelper(A, left_col, mid_col, right_col, level):
+    answer = []
+    if A.left != None:
+        votHelper([], left_col, mid_col)
+    mid_col.insert(A.val)
+    if A.right != None:
+        votHelper(mid_col, right_col, [])
+
+    return answer
+
+from collections import deque
+def verticalOrderTraversal(A):
+    # Parameter: A is the root node of a binary tree
+    # Perform: If two tree nodes share the same vertical line, the one with lesser depth comes first
+    # Output: Return a list of lists of integers (each sublist is a vertical line)
+    # Approach: Hashmap for each column
+    answer = []
+
+    columns = {}
+    q = deque([])
+    nextq = deque([])
+    if A == None:
+        return []
+    else:
+        q = deque([(0, A)])
+        min_col = 0
+        max_col = 0
+
+    while q:
+        current = q.popleft()
+        current_col = current[0]
+        current_node = current[1]
+        current_val = current_node.val
+        current_left = current_node.left
+        current_right = current_node.right
+        if current_col in columns:
+            current_col_list = columns[current_col]
+            current_col_list.append(current_val)
+            columns[current_col] = current_col_list
+        else:
+            columns[current_col] = [current_val]
+        if current_left != None:
+            left_col = current_col - 1
+            min_col = min(left_col, min_col)
+            nextq.append((left_col, current_left))
+        if current_right != None:
+            right_col = current_col + 1
+            max_col = max(right_col, max_col)
+            nextq.append((right_col, current_right))
+        if not q:
+            q = nextq
+            nextq = deque([])
+
+    for column in range(min_col, max_col + 1):
+        answer.append(columns[column])
+
+    return answer
+
+
+## BINARY SEARCH
+### Implement Power Function
+def pow(x, n, d):
+    # Parameters: x is an integer, n is an integer representing the exponent,
+    #   and d is an integer to modulo the exponential result (show the remainder)
+    # Perform: Apply (x ^ n) % d and since the remainder cannot be negative
+    # Output: The remainder after modulo. Do not return a negative answer
+    # Example: x = 2, n = 3, d = 3 -> 2 % 3 = 8 % 3 = 2 -> 2
+    m = x % d
+    if n == 0:
+        if x == 0:
+            return 0
+        else:
+            return 1
+    elif n == 1:
+        return m
+    else:
+        r = n % 2
+        m = n // 2
+        if r == 0:
+            answer = pow(x * x, m, d)
+        else:
+            answer = x * pow(x * x, m, d)
+        answer %= d
+
+    return answer
