@@ -555,6 +555,30 @@ def countAndSay(A):
     return sayArray[-1]
 
 
+## words
+### Length of Last Word
+def lengthOfLastWord(A):
+    # Parameter: A is a string consisting of upper and lower case letters and spaces
+    # Output: An integer, the length of the last word in the string or 0 if last word DNE
+    # Example: "hello world" -> "world" -> 5
+    if len(A) < 1:
+        return 0
+
+    index = len(A) - 1          # 10
+    answer = 0
+
+    while index > -1:
+        if A[index] == " " and answer > 0:     # True
+            return answer
+        elif A[index] != " ":
+            answer += 1         # 5
+            index -= 1          # 5
+        else:
+            index -= 1
+
+    return answer
+
+
 ## String Tricks
 ### Longest Palindromic Substring
 def expandAroundCenter(S, left, right):
@@ -686,3 +710,92 @@ def prettyJSON(A):
     #         ]
     #     }
     # ]
+def stocks_2(A):
+    # Parameters: A is a list of stock prices
+    # Perform: FInd the max profit, buying and selling as often as wanted
+    #   (must sell before buying again)
+    # Output: Integer, the max profit
+    if len(A) == 0:
+        return 0
+
+    max_profit = 0
+    current_profit = 0
+    last_minimum = A[0]
+    #last_maximum = -1
+    last_price = A[0]
+
+    for x in A[1:]:
+        if x > last_price:
+            #last_maximum = x
+            current_profit = x - last_minimum
+        elif x < last_price:
+            last_minimum = x
+            if current_profit > 0:
+                max_profit += current_profit
+                current_profit = 0
+                #last_maximum = 0
+        last_price = x
+
+    max_profit += current_profit
+
+    return max_profit
+
+
+# HASHING
+## Copy List
+class RandomListNode:
+    def __init__(self, x):
+        self.label = x
+        self.next = None
+        self.random = None
+
+def copyRandomListNode(node, existing_nodes):
+    if node.label in existing_nodes:
+        new = existing_nodes[node.label]
+    else:
+        new = RandomListNode(node.label)
+    if node.next == None:
+        # Do Nothing
+        new.next = None
+    else:
+        new_next = copyRandomListNode(node.next, existing_nodes)
+        existing_nodes[new_next.label] = new_next
+        new.next = existing_nodes[new_next.label]
+
+    if node.random == None:
+        # Do Nothing
+        new.random = None
+    elif node.random.label in existing_nodes:
+        new.random = existing_nodes[node.random.label]
+    else:
+        new_random = RandomListNode(node.random.label)
+        existing_nodes[new_random.label] = new_random
+        new.random = existing_nodes[new_random.label]
+
+    return (new, existing_nodes)
+
+def copyRandomList(self, head):
+    # Parameters: head is a RandomListNode, the head of a linked list
+    # Perform: Make a deep copy of the list. Ensure that no random pointers of the
+    #   copied list point to any nodes on the old list.
+    # Output: A RandomListNode, the head of the copied linked list
+    current = head
+    existing_nodes = {}
+    first = True
+    result = None
+
+    while current:
+        copy_node_result = copyRandomListNode(current, existing_nodes)
+        current_copy = copy_node_result[0]
+        existing_nodes = copy_node_result[1]
+
+        if first:
+            result = current_copy
+            first = False
+
+        current = current_copy.next
+
+    return result
+
+83 281 188 173 253 0 281 254 254 281 56 281 70 0 3 56 276 281 233 281 280 83 224 253 16 16 173 281 You seem to have created duplicate nodes for the sake of random pointers.
+83 281 188 173 253 0 281 254 254 281 56 281 70 0 3 56 276 281 233 281 280 83 224 253 16 16 173 281

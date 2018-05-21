@@ -1,3 +1,8 @@
+        if current_left and current_right:
+            print("B")
+            current_left.next = current_right
+            last_next = current_right
+
 # RECURSION / BACKTRACKING
 ## Subsets
 ### Subset
@@ -280,6 +285,87 @@ def findMinXor_naive(A):
                 min_xor = curr_xor
     return min_xor
 
+
+### Divide Integers
+def divide(A, B):
+    # Iterate on i bit position from 31 to 1 (32 to 0)
+    # Is B << i < A?
+    # Once yes, that i is the MSB
+    # Remainder is new divisor
+    negative = False
+    if B == 0:
+        return 2147483647
+    elif B == 1:
+        return A
+    elif B < 0 and A < 0:
+        return divide(-A, -B)
+    elif B < 0 or A < 0:
+        negative = True
+
+    remainder = abs(A)
+    answer = 0
+    i = 32
+    for i in range(32, -1, -1):
+        test = B << i
+        if abs(test) < remainder:
+            answer += 1 << i
+            remainder -= abs(test)
+        if remainder < abs(B):
+            break
+
+    if negative == True:
+        return -answer
+    else:
+        return answer
+
+
+### NQueens
+    ''' Example: 4-queens = [
+        [".Q..",
+         "...Q",
+         "Q...",
+         "..Q."],
+        ["..Q.",
+         "Q...",
+         "...Q",
+         ".Q.."]
+    ]
+    '''
+def print_board(A):
+    output = []
+    for row in A:
+        row_out = ""
+        for col in row:
+            if A[row][col] == 0:
+                row_out.append(".")
+            elif A[row][col] == 1:
+                row_out.append("Q")
+        output.append(row_out)
+
+    return output
+
+def solveNQueens(A):
+    # Parameter: A is an integer
+    # Perform: Place A queens on an AxA chess board such that no queens attack
+    #   each other
+    # Output: All distinct solutions to the puzzle in the format of a list of
+    #   lists where each row is a string of dots (.) for each empty square or
+    #   "Q" for a square containing a queen.
+    # Approach:
+    #   Place a queen in column 0, row 0
+    #       If row 0 yields a solution, return true
+    #       If row 0 doesn't yield a solution, try the next row or if this is
+    #           the last row, return false
+    #   Place a queen in the next column
+    row = [0] * A
+    board = [row] * A
+    solutions = []
+
+    
+    solutions.append(print_board(board))
+
+    return solutions
+
 ### Mock Interview
 # A xor B
 #   110110
@@ -470,3 +556,23 @@ def bitCount(N):
     while N >> num_bits:
         num_bits += 1
     return num_bits
+
+
+### Different Bit Count Pairwise
+def count_set_bits(A):
+    count = 0
+    while A > 0:
+        count += A & 1
+        A >>= 1
+    return count
+
+def cntbits(A):
+    N = len(A)
+    answer = 0
+
+    for i in range(N):
+        for j in range(i + 1, N):
+            diff_bits = count_set_bits(A[i] ^ A[j])
+            answer += diff_bits
+
+    return answer

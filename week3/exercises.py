@@ -95,6 +95,65 @@ def postorderTraversal(A):
     return traversal
 
 
+## Level Order
+### Populate Next Right Pointers Tree
+class TreeLinkNode:
+    def __init__(self, x):
+        self.val = x
+        self.left = None
+        self.right = None
+        self.next = None
+
+def connect(root):
+    # Parameter: The root node of a binary tree
+    # Perform: Populate the next pointer to point to the next right node. If no
+    #   next right node, set next pointer to None.
+    # Output: Nothing
+    # Goal: O(1) extra space. Recursion is not constant space. The binary tree
+    #   may not be perfect.
+    # 387077 340383 562082 409269 517606 534779 986434 702531 720965 647033 727076 NULL 719463 983736 824451 834145 NULL NULL NULL NULL NULL
+    # 387077 340383 562082 409269 517606 534779 986434 702531 720965 647033 727076 NULL 719463 983736 824451 834145 NULL NULL NULL NULL NULL
+    # 28853 33090 26527 100198 161326 180722 87854 50782 51208 69725 66899 103548 79117 73260 134531 114761 664467 326663 850082 196521 187605 255457 298159 603123 415961 411487 412294 NULL NULL 377684 209762 274844 379623 311604 344728 545464 357548 773985 462110 548587 398392 477976 468700 492019 498100 491819 599430 507966 585788 509566 NULL NULL 610117 NULL 604554 603382 602218 619311 616193 760369 633869 678183 NULL 684882 646060 671177 667529 973809 681109 689824 762219 747257 NULL 773186 784081 826902 780090 776851 899271 792094 831066 NULL NULL 862205 868662 NULL NULL 959993 951588 976568 NULL NULL NULL NULL
+    # 28853 33090 26527 100198 161326 180722 87854 50782 51208 69725 66899 103548 79117 73260 134531 114761 664467 326663 850082 196521 187605 255457 298159 603123 415961 411487 412294 NULL NULL 377684 209762 274844 379623 311604 344728 545464 357548 773985 462110 548587 398392 477976 468700 492019 498100 491819 599430 507966 585788 509566 NULL NULL 610117 NULL 604554 603382 602218 619311 616193 760369 633869 678183 NULL 684882 646060 671177 667529 973809 681109 689824 762219 747257 NULL 773186 784081 826902 780090 776851 899271 792094 831066 NULL NULL 862205 868662 NULL NULL 959993 951588 976568 NULL NULL NULL NULL
+
+    current_node = root
+    first_next = None
+    last_next = None
+    while current_node:
+        current_left = current_node.left
+        current_right = current_node.right
+        if current_left and not first_next:
+            print("A")
+            first_next = current_left
+        if current_left and last_next:
+            print("B")
+            last_next.next = current_left
+            last_next = current_left
+        elif current_left and not last_next:
+            print("B2")
+            last_next = current_left
+        if current_left and current_right:
+            print("C")
+            current_left.next = current_right
+            last_next = current_right
+        if current_right and not first_next:
+            print("D")
+            first_next = current_right
+        if current_right and last_next:
+            print("E")
+            last_next.next = current_right
+            last_next = current_right
+        if current_node.next:
+            print("F")
+            current_node = current_node.next
+        else:
+            print("G")
+            current_node = first_next
+            first_next = None
+            last_next = None
+
+    return root
+
 ## Simple Tree Ops
 ### Balanced Binary Tree
 def getHeight(A):
@@ -674,6 +733,52 @@ def verticalOrderTraversal(A):
 
     return answer
 
+
+
+### Sum Root to Leaf Numbers
+class TreeNode:
+    def __init__(self, x):
+        self.val = x
+        self.left = None
+        self.right = None
+
+def produceNum(A):
+    # Parameter: A list of nodes containing the digits in a number
+    # Output: A number comprised of those digits
+    power = 1
+    answer = 0
+    for each_node in reversed(A):
+        digit = each_node.val
+        answer += digit * power
+        power *= 10
+
+    return answer
+
+def sumNumbers(A):
+    # Parameter: Root node of a binary tree where each node is a digit 0-9
+    # Perform: Sum all the root-to-leaf paths % 1003
+    # Output: The sum
+    q = []
+    q.append([A])
+    sum = 0
+
+    while q:
+        curr_list = q.pop()
+        last_node = curr_list[-1]
+        if !last_node.left and !last_node.right:        # reached a leaf
+            curr_num = produceNum(curr_list)
+            sum += curr_num
+            sum %= 1003
+        if last_node.left:
+            left_list = list(curr_list)
+            left_list.append(last_node.left)
+            q.append(left_list)
+        if last_node.right:
+            right_list = list(curr_list)
+            right_list.append(last_node.right)
+            q.append(right_list)
+
+    return sum
 
 ## BINARY SEARCH
 ### Implement Power Function
