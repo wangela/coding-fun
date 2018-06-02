@@ -530,6 +530,162 @@ def sqrt(A):
 
     return root
 
+### Allocate Books
+def books_brute(A, B):
+    # Parameters: A is a list of N books with A[i] pages. B is the number of students.
+    # Perform: Allocate the books to the students in contiguous order.
+    #   Minimize the maximum number of pages allotted to a student.
+    #   Each student must have at least 1 book.
+    # Output: Integer, the minimum number of pages. Return -1 if valid assignment not possible.
+    # Example: A = [12, 34, 67, 90], B = 2 -> [12], [34, 67, 90] -> [12, 191] -> 191
+    #                                      -> [12, 34], [67, 90] -> [46, 157] -> 157
+    #                                      -> [12, 34, 67], [90] -> [113, 90] -> 113*
+    # Approach: (1) Place borders at first indices, identify the sums
+    #       (2) Identify the max sum, move the closest border to reduce that sum, update sums
+    #       (3) If new max is less than old max, continue. Else, return the last max
+    #       (4) Corner cases: Length of A < B, B = 1
+    if len(A) < B:
+        return -1
+    if B == 1:
+        sum_a = A.pop()
+        while A:
+            sum_a += A.pop()
+        return sum_a
+
+    num_borders = B - 1
+    borders = [0] * num_borders
+    max_border_index = 0
+    max_sum_index = 0
+    sums = [0] * B
+    last_max_sum = A[0]
+
+    for n in range(num_borders):
+        borders[n] = n
+
+    while max_border_index < len(A) and max_border_index > borders[max_sum_index - 1] + 1:
+        for index, border in enumerate(borders):
+            wall = 0
+            count = border - wall
+            while count > 0:
+                sums[index] += A[wall + count]
+
+        max_sum = max(sums)
+        if max_sum > last_max_sum:
+            return last_max_sum
+        max_sum_index = sums.index(max_sum)
+        max_border_index = borders[max_sum_index]
+
+    return max_sum
+
+def isPossible(A, m, curr_min):
+    students_required = 1
+    curr_sum = 0
+
+    for book in A:
+        # If number of pages > current minimum
+        if book > curr_min:
+            return False
+
+        if curr_sum + book > curr_min:
+            students_required += 1
+            curr_sum = book
+
+            if students_required > m:
+                return False
+        else:
+            curr_sum += book
+
+    return True
+
+def books(A, B):
+    sum = 0
+    if len(A) < B:
+        return -1
+
+    copy_a = list(A)
+    sum_a = copy_a.pop()
+    while copy_a:
+        sum_a += copy_a.pop()
+
+    start = 0
+    end = sum_a
+    answer = sys.maxsize
+
+    while start <= end:
+        mid = (start + end) / 2
+        if isPossible(A, B, mid):
+            answer = min(answer, mid)
+            end = mid - 1
+        else:
+            start = mid + 1
+    return answer
+
+
+### Painters Partition Problem
+def enough_painters(C, max_time_per_painter, A):
+    painters = 1
+    i = 0
+    painted = 0
+
+    while i < len(C):
+        if C[i] > max_time_per_painter:
+            return False
+
+        if painted + C[i] > max_time_per_painter:
+            painters += 1
+            painted = C[i]
+            if painters > A:
+                return False
+        else:
+            painted += C[i]
+        i += 1
+    return True
+
+def paint(A, B, C):
+    # Parameters: A is the number of painters,
+    #   B is the time it takes for a painter to paint 1 unit of board
+    #   C is a list of board lengths in units
+    # Perform: Find the minimum time it would take to paint all the boardsself.
+    #   Painters will only paint contiguous sections of board
+    # Output: The minimum time % 10000003
+    # Example: paint(2, 5, [1, 10]) -> 50
+    min_total_time = sys.maxsize
+
+    total_boards = list(C)
+    total_length = 0
+    while total_boards:
+        total_length += total_boards.pop()
+
+    start = C[0]
+    end = total_length
+    mid = (start + end) / 2
+
+    while start < end:
+        if enough_painters(C, mid, A):
+            end = mid
+            mid = (start + end) / 2
+            print("mid = {}".format(mid))
+        else:
+            start = mid + 1
+            mid = (start + end) / 2
+            print("next mid = {}".format(mid))
+
+    min_total_time = mid
+    # paint_times = []
+    # i = 0
+    # current_painter = 0
+    # while i < len(C):
+    #     if current_painter + C[i] > mid:
+    #         paint_times.append(current_painter)
+    #         current_painter = C[i]
+    #     else:
+    #         current_painter += C[i]
+    #     i += 1
+    # paint_times.append(current_painter)
+    # print(paint_times)
+    # min_total_time = max(paint_times)
+
+    return (min_total_time * B) % 10000003
 
 
 # CHALLENGES

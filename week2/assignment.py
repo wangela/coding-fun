@@ -490,3 +490,44 @@ def removeNthNodeFromListEnd(A, B):
     before_B.next = node_B.next
 
     return head
+
+
+### Merge Point of 2 Linked Lists
+## List 2 pointer
+### Remove duplicates from sorted list
+class ListNode:
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+
+def l_length(C):
+    length = 0
+    while C:
+        length += 1
+        C = C.next
+    return length
+
+def mergePoint(A, B):
+    # Parameters: A, B are head nodes of linked lists
+    # Perform: Find if there is a merge point after which both linked lists are the same
+    # Output: Merge Point
+    # Goal: O(m + n) time, O(1) space
+    m = l_length(A)
+    n = l_length(B)
+    d = m - n
+
+    if d > 0:
+        for i in range(d):
+            A = A.next
+    elif d < 0:
+        for j in range(d):
+            B = B.next
+
+    while A:
+        if A == B:
+            return A
+        else:
+            A = A.next
+            B = B.next
+
+    return None

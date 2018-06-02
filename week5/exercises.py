@@ -74,6 +74,50 @@ def generate_steps(A, B, x):
             all_stepping_numbers.append(step_up)
     return result
 
+### Word Search board
+def searchUtil(N, B, I, J):
+    if len(B) == 0:
+        return False
+    elif len(B) == 1:
+        if N[I][J] == B[0]:
+            return True
+    else:   # len(B) > 1:
+        if searchUtil(N, B[1:], I, J):
+            print(B[1:], I, J)
+            neighbors = set()
+            if J < len(N[0]) - 1:
+                neighbors.add(N[I][J + 1])
+            if J > 0:
+                neighbors.add(N[I][J - 1])
+            if I < len(N) - 1:
+                neighbors.add(N[I + 1][J])
+            if I > 0:
+                neighbors.add(N[I - 1][J])
+            print("neighbors = ", neighbors)
+            if B[0] in neighbors:
+                return True
+    return False
+
+def exist(A, B):
+    # Parameters: A is a 2-D board (array of arrays) and B is a word (string)
+    # Perform: Find if a word exists in the board. Word exists if it can be
+    #   constructed out of letters adjacent horizontally or vertically. Letters
+    #   can be used more than once.
+    # Output: Return 1 if exists, 0 if doesn't exist in the board.
+    # Example: [['ABCE'], ['SFCS'], ['ADEE']]
+    #     "ABCCED" -> 1, "ABCB" -> 1, "ABFSAB" -> 1, "ABCD" -> 0
+    # Approach: Create a bi-directional graph (adjacency list as dictionary),
+    #   then recursively search the graph for the word starting with the last
+    #   letter of the word
+    row_length = len(A)
+    col_length = len(A[0])
+
+    for i in range(row_length):
+        for j in range(col_length):
+            if searchUtil(A, B, i, j):
+                return 1
+    return 0
+
 ## Shortest Path
 ### Sum of Fibonacci Numbers
 def fibsum(A):
@@ -164,6 +208,7 @@ def solve_inefficient(A, B, C, D):
     answer.sort()
     answer = answer[:D]
     return answer
+
 
 ## Graph Adhoc
 ### Convert Sorted List to Binary Tree
