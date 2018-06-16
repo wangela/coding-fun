@@ -3,6 +3,10 @@
 // Remove Duplicates from Sorted List
 import Foundation
 
+for each in 0..<5 {
+    print(each)
+}
+
 class ListNode {
     var val: Int = 0
     var next: ListNode?
